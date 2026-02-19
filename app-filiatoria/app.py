@@ -20,7 +20,7 @@ agent = init_agent()
 
 st.title("⚖️ Asistente Jurídico – Derecho de Familia Argentino")
 
-#HISTORIAL
+# HISTORIAL
 if "chat" not in st.session_state:
     st.session_state.chat = []
 
@@ -29,11 +29,11 @@ for msg in st.session_state.chat:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-#INPUT
+# INPUT
 question = st.chat_input("Escribí tu consulta jurídica...")
 
 if question:
-    # 👤 Usuario
+    # Usuario
     st.session_state.chat.append({
         "role": "user",
         "content": f"👤 {question}"
@@ -44,16 +44,15 @@ if question:
 
     config = {"configurable": {"thread_id": "streamlit"}}
 
-    #Asistente
+    # Asistente
     with st.chat_message("assistant"):
-        with st.spinner("Analizando..."):
-            for step in agent.stream(
+        with st.spinner("Analizando... ⚖️🤖"):
+            result = agent.invoke(
                 {"messages": [HumanMessage(content=question)]},
-                config,
-                stream_mode="values",
-            ):
-                respuesta = step["messages"][-1].content
+                config
+            )
 
+            respuesta = result["messages"][-1].content
             st.markdown(f"🤖 {respuesta}")
 
     st.session_state.chat.append({
