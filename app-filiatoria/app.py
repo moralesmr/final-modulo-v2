@@ -20,17 +20,39 @@ agent = init_agent()
 
 st.title("⚖️ Asistente Jurídico – Derecho de Familia Argentino")
 
-question = st.text_input("Ingresá tu consulta jurídica:")
+# Inicializar historial
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+#Mostrar historial
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
+
+question = st.chat_input("Escribí tu consulta jurídica...")
 
 if question:
+    #pregunta usuario
+    st.session_state.messages.append(
+        {"role": "user", "content": f"👤 {question}"}
+    )
+    with st.chat_message("user"):
+        st.markdown(f"👤 {question}")
+
     config = {"configurable": {"thread_id": "streamlit"}}
 
-    with st.spinner("Analizando..."):
-        for step in agent.stream(
-            {"messages": [HumanMessage(content=question)]},
-            config,
-            stream_mode="values",
-        ):
-            respuesta = step["messages"][-1].content
+    #respuesta asistente
+    with st.chat_message("assistant"):
+        with st.spinner("Analizando..."):
+            for step in agent.stream(
+                {"messages": [HumanMessage(content=question)]},
+                config,
+                stream_mode="values",
+            ):
+                respuesta = step["messages"][-1].content
 
-    st.markdown(respuesta)
+            st.markdown(f"🤖 {respuesta}")
+
+    st.session_state.messages.append(
+        {"role": "assistant", "content": f"🤖 {respuesta}"}
+    )
