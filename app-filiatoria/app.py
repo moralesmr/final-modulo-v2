@@ -39,23 +39,20 @@ if question:
         "content": f"👤 {question}"
     })
 
-    with st.chat_message("user"):
-        st.markdown(f"👤 {question}")
-
-    config = {"configurable": {"thread_id": "streamlit"}}
-
-    # Asistente
     with st.chat_message("assistant"):
-        with st.spinner("Analizando... ⚖️🤖"):
-            result = agent.invoke(
-                {"messages": [HumanMessage(content=question)]},
-                config
-            )
+    with st.spinner("Analizando... ⚖️🤖"):
+        result = agent.invoke(
+            {"messages": [HumanMessage(content=question)]},
+            config
+        )
 
-            respuesta = result["messages"][-1].content
-            st.markdown(f"🤖 {respuesta}")
+        if isinstance(result, dict):
+            if "messages" in result:
+                respuesta = result["messages"][-1].content
+            else:
+                respuesta = result.get("output", "No se pudo generar respuesta.")
+        else:
+            respuesta = str(result)
 
-    st.session_state.chat.append({
-        "role": "assistant",
-        "content": f"🤖 {respuesta}"
+        st.markdown(f"🤖 {respuesta}")
     })
