@@ -1,0 +1,9 @@
+streamlit
+langchain-classic
+langchain-openai
+langchain-core
+langchain-community
+langgraph
+langchain-tavily
+chromadb
+pypdf
