@@ -1,0 +1,37 @@
+from langchain_core.tools import tool
+from langchain_tavily import TavilySearch
+
+def build_tools(vectorstore):
+
+    @tool
+    def buscar_articulo_ccyc(numero: str) -> str:
+        try:
+            num = int(numero)
+        except ValueError:
+            return "Número de artículo inválido."
+
+        if num < 529 or num > 723:
+            return "El artículo no pertenece al Derecho de Familia."
+
+        docs = vectorstore.similarity_search(f"Artículo {num}", k=1)
+        if not docs:
+            return "Artículo no encontrado."
+
+        return docs[0].page_content
+
+    tavily = TavilySearch(max_results=5, topic="general")
+
+    @tool
+    def buscar_en_fuentes_juridicas_argentinas(consulta: str) -> str:
+        query = f"{consulta} derecho argentino"
+        res = tavily.run(query)
+
+        if not res or "results" not in res:
+            return "No se encontraron fuentes."
+
+        return "\n".join(
+            f"- {r['title']}: {r['url']}"
+            for r in res["results"]
+        )
+
+    return [buscar_articulo_ccyc, buscar_en_fuentes_juridicas_argentinas]
