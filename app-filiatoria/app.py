@@ -33,7 +33,7 @@ for msg in st.session_state.chat:
 question = st.chat_input("Escribí tu consulta jurídica...")
 
 if question:
-    # 👤 USUARIO
+    #USUARIO
     st.session_state.chat.append({
         "role": "user",
         "content": f"{question}"
@@ -46,7 +46,7 @@ if question:
 
     # ASISTENTE
     with st.chat_message("assistant"):
-        with st.spinner("Analizando... 🤖"):
+        with st.spinner("Analizando..."):
             result = agent.invoke(
                 {"messages": [HumanMessage(content=question)]},
                 config
