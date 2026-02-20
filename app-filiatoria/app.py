@@ -36,17 +36,17 @@ if question:
     # 👤 USUARIO
     st.session_state.chat.append({
         "role": "user",
-        "content": f"👤 {question}"
+        "content": f"{question}"
     })
 
     with st.chat_message("user"):
-        st.markdown(f"👤 {question}")
+        st.markdown(f"{question}")
 
     config = {"configurable": {"thread_id": "streamlit"}}
 
     # ASISTENTE
     with st.chat_message("assistant"):
-        with st.spinner("Analizando... ⚖️🤖"):
+        with st.spinner("Analizando... 🤖"):
             result = agent.invoke(
                 {"messages": [HumanMessage(content=question)]},
                 config
@@ -60,9 +60,9 @@ if question:
             else:
                 respuesta = str(result)
 
-            st.markdown(f"🤖 {respuesta}")
+            st.markdown(f"{respuesta}")
 
     st.session_state.chat.append({
         "role": "assistant",
-        "content": f"🤖 {respuesta}"
+        "content": f"{respuesta}"
     })
